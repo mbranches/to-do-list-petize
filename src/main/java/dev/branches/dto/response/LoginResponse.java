@@ -1,4 +1,4 @@
-package dev.branches.dto;
+package dev.branches.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

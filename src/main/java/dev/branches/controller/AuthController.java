@@ -1,8 +1,8 @@
 package dev.branches.controller;
 
-import dev.branches.dto.LoginRequest;
-import dev.branches.dto.LoginResponse;
-import dev.branches.dto.RegisterRequest;
+import dev.branches.dto.request.LoginRequest;
+import dev.branches.dto.response.LoginResponse;
+import dev.branches.dto.request.RegisterRequest;
 import dev.branches.entity.User;
 import dev.branches.exception.DefaultErrorMessage;
 import dev.branches.service.UserService;

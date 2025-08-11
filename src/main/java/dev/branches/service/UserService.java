@@ -1,6 +1,5 @@
 package dev.branches.service;
 
-import dev.branches.dto.RegisterRequest;
 import dev.branches.entity.User;
 import dev.branches.exception.BadRequestException;
 import dev.branches.infra.security.JwtTokenService;

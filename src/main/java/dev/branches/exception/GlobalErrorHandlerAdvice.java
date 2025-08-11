@@ -3,6 +3,7 @@ package dev.branches.exception;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -38,5 +39,12 @@ public class GlobalErrorHandlerAdvice {
 
         DefaultErrorMessage response = new DefaultErrorMessage (HttpStatus.BAD_REQUEST.value(), defaultMessage);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<DefaultErrorMessage> handlerAuthenticationException(AuthenticationException e) {
+        DefaultErrorMessage error = new DefaultErrorMessage(HttpStatus.UNAUTHORIZED.value(), "Email ou senha inválidos");
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 }

@@ -7,6 +7,10 @@ spring:
     url: jdbc:mysql://localhost:3308/to_do_list
     username: root
     password: ${ENV_MYSQL_PASSWORD}
+  sql:
+    init:
+      schema-locations: classpath:db/sql/init.sql
+      mode: always
   jpa:
     show-sql: true
     hibernate:

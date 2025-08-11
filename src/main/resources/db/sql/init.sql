@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS tb_user(
 CREATE TABLE IF NOT EXISTS tb_task(
     id varchar(36) PRIMARY KEY,
     title varchar(50) NOT NULL,
-    description varchar(200) NOT NULL,
+    description varchar(200),
     due_date date not null,
     status enum('PENDENTE', 'EM_ANDAMENTO', 'CONCLUIDA') NOT NULL,
     priority enum('ALTA', 'BAIXA', 'REGULAR') NOT NULL,

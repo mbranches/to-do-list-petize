@@ -26,3 +26,6 @@ springdoc:
   default-produces-media-type: application/json
   swagger-ui:
     tagsSorter: "alpha"
+jwt:
+  secret:
+    key: ${ENV_JWT_KEY}

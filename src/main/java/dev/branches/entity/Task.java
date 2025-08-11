@@ -1,0 +1,46 @@
+package dev.branches.entity;
+
+import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Setter
+@Getter
+@Entity(name = "tb_task")
+public class Task {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @EqualsAndHashCode.Include
+    private String id;
+    @Column(length = 50, nullable = false)
+    private String title;
+    @Column(length = 200)
+    private String description;
+    @Column(name = "due_date", nullable = false)
+    private LocalDate dueDate;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TaskStatus status;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Priority priority;
+    @Column(name = "created_at")
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+    @Column(name = "updated_at")
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id")
+    private User user;
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    private Task parent;
+}

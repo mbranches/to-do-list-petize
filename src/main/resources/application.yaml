@@ -1,0 +1,3 @@
+spring:
+  application:
+    name: to-do-list

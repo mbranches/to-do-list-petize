@@ -1,14 +1,11 @@
 package dev.branches.service;
 
-import dev.branches.dto.LoginResponse;
 import dev.branches.dto.RegisterRequest;
 import dev.branches.entity.User;
 import dev.branches.exception.BadRequestException;
 import dev.branches.infra.security.JwtTokenService;
 import dev.branches.repository.UserRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

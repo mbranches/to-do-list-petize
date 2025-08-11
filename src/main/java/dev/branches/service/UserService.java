@@ -22,15 +22,10 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenService jwtTokenService;
 
-    public void create(RegisterRequest request) {
-        String userEmail = request.email();
+    public void create(User user, String password) {
+        assertThatEmailDoesNotBelongsToAnotherUser(user.getEmail());
 
-        assertThatEmailDoesNotBelongsToAnotherUser(userEmail);
-
-        User user = new User();
-        user.setEmail(userEmail);
-        user.setName(request.name());
-        user.setPassword(passwordEncoder.encode(request.password()));
+        user.setPassword(passwordEncoder.encode(password));
 
         repository.save(user);
     }

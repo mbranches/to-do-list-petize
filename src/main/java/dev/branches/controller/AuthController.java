@@ -3,6 +3,7 @@ package dev.branches.controller;
 import dev.branches.dto.LoginRequest;
 import dev.branches.dto.LoginResponse;
 import dev.branches.dto.RegisterRequest;
+import dev.branches.entity.User;
 import dev.branches.exception.DefaultErrorMessage;
 import dev.branches.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -45,7 +46,11 @@ public class AuthController {
     )
     @PostMapping("/register")
     public ResponseEntity<Void> register(@RequestBody @Valid RegisterRequest request) {
-        service.create(request);
+        User userToRegister = new User();
+        userToRegister.setName(request.name());
+        userToRegister.setEmail(request.email());
+
+        service.create(userToRegister, request.password());
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

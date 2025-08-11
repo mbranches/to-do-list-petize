@@ -7,6 +7,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @ToString
 @With
@@ -46,4 +47,6 @@ public class Task {
     @ManyToOne
     @JoinColumn(name = "parent_id")
     private Task parent;
+    @OneToMany(mappedBy = "parent")
+    private List<Task> subtasks;
 }

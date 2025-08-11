@@ -1,0 +1,13 @@
+services:
+  mysql:
+    container_name: to-do-list-petize-mysql
+    image: mysql:8.1
+    environment:
+      MYSQL_DATABASE: to_do_list
+      MYSQL_ROOT_PASSWORD: ${ENV_MYSQL_PASSWORD}
+    ports:
+      - "3308:3306"
+    volumes:
+      - to-do-list-petize-db:/var/lib/mysql
+volumes:
+  to-do-list-petize-db:

@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Autenticação")
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
 @RestController
@@ -34,7 +36,7 @@ public class AuthController {
                 ),
                 @ApiResponse(
                         responseCode = "400",
-                        description = "email já está cadastrado",
+                        description = "email já está cadastrado ou algum campo obrigatório não enviado no corpo da requisição",
                         content = @Content(
                                 schema = @Schema(implementation = DefaultErrorMessage.class)
                         )
@@ -47,3 +49,39 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @Operation(
+            summary = "Login",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "usuário logado com sucesso",
+                            content = @Content(
+                                    schema = @Schema(implementation = LoginResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "campo obrigatório não enviado no corpo da requisição",
+                            content = @Content(
+                                    schema = @Schema(implementation = DefaultErrorMessage.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "email ou senha inválidos",
+                            content = @Content(
+                                    schema = @Schema(implementation = DefaultErrorMessage.class)
+                            )
+                    )
+            }
+    )
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request) {
+        String accessToken = service.login(request.email(), request.password());
+
+        LoginResponse response = new LoginResponse(accessToken);
+
+        return ResponseEntity.ok(response);
+    }
+}

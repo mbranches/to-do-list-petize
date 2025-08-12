@@ -76,6 +76,6 @@ public class TaskService {
 
     public Task findByIdAndUserOrThrowsNotFoundException(String id, User user) {
         return repository.findByIdAndUser(id, user)
-                .orElseThrow(() -> new NotFoundException("Task com id '%s' não encontrada".formatted(id)));
+                .orElseThrow(() -> new NotFoundException("Tarefa com id '%s' não encontrada".formatted(id)));
     }
 }

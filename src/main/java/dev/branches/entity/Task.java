@@ -46,6 +46,7 @@ public class Task {
     private User user;
     @ManyToOne
     @JoinColumn(name = "parent_id")
+    @ToString.Exclude
     private Task parent;
     @OneToMany(mappedBy = "parent")
     private List<Task> subtasks;

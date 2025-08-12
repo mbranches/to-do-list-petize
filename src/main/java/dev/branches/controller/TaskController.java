@@ -1,5 +1,6 @@
 package dev.branches.controller;
 
+import dev.branches.dto.ParentTaskByAddSubtask;
 import dev.branches.dto.request.TaskPostRequest;
 import dev.branches.dto.response.PageResponse;
 import dev.branches.dto.response.TaskGetResponse;
@@ -129,5 +130,47 @@ public class TaskController {
         PageResponse<TaskGetResponse> response = PageResponse.by(taskGetResponseList);
 
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+            summary = "Adicionar subtarefa",
+            description = "Adiciona uma subtarefa a outra já criada",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "subtarefa adicionada com sucesso"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "campo obrigatório não enviado no corpo da requisição ou a tarefa pai possui status CONCLUIDA e a filha possui um status diferente",
+                            content = @Content(schema = @Schema(implementation = DefaultErrorMessage.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "usuário solicitante não autenticado",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "id da tarefa pai não encontrado",
+                            content = @Content(schema = @Schema(implementation = DefaultErrorMessage.class))
+                    )
+            }
+    )
+    @PostMapping("/{parentTaskId}/subtasks")
+    public ResponseEntity<ParentTaskByAddSubtask> addSubtask(@AuthenticationPrincipal User requestingUser, @PathVariable String parentTaskId, @RequestBody TaskPostRequest request) {
+        Task subtaskToCreate = Task.builder()
+                .user(requestingUser)
+                .title(request.title())
+                .description(request.description())
+                .dueDate(request.dueDate())
+                .priority(request.priority())
+                .build();
+
+        Task createdTask = service.addSubtask(requestingUser, parentTaskId, subtaskToCreate, request.status());
+
+        ParentTaskByAddSubtask response = ParentTaskByAddSubtask.by(createdTask);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

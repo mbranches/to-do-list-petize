@@ -1,13 +1,16 @@
-package dev.branches.dto.response;
+package dev.branches.dto;
 
+import dev.branches.dto.response.TaskGetResponse;
+import dev.branches.dto.response.TaskSummaryResponse;
 import dev.branches.entity.Priority;
 import dev.branches.entity.Task;
 import dev.branches.entity.TaskStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDate;
+import java.util.List;
 
-public record TaskPostResponse(
+public record ParentTaskByAddSubtask(
         @Schema(example = "uuid.task-1", description = "id da task")
         String id,
         @Schema(example = "Realizar teste técnico", description = "título da tarefa")
@@ -16,23 +19,28 @@ public record TaskPostResponse(
         String description,
         @Schema(example = "2025-08-15", description = "data de vencimento")
         LocalDate dueDate,
-        @Schema(example = "PENDENTE", description = "status da tarefa")
+        @Schema(example = "EM_ANDAMENTO", description = "status da tarefa")
         TaskStatus status,
         @Schema(example = "ALTA", description = "prioridade da tarefa")
         Priority priority,
-        @Schema(description = "Pai da task, fica nulo caso a task seja principal", nullable = true)
-        TaskSummaryResponse parent
+        @Schema(example = "uuid.task-pai-exemplo", description = "ID da tarefa pai. Será nulo se for uma tarefa principal.", nullable = true)
+        String parentId,
+        @Schema(description = "Lista de subtarefas associadas a esta tarefa.", nullable = true)
+        List<TaskSummaryResponse> subtasks
 ) {
-    public static TaskPostResponse by(Task task) {
-        TaskSummaryResponse parent = task.getParent() != null ? TaskSummaryResponse.by(task.getParent()) : null;
-        return new TaskPostResponse(
+    public static ParentTaskByAddSubtask by(Task task) {
+        String parentId = task.getParent() != null ? task.getParent().getId() : null;
+        List<TaskSummaryResponse> subtasks = task.getSubtasks().stream().map(TaskSummaryResponse::by).toList();
+
+        return new ParentTaskByAddSubtask(
                 task.getId(),
                 task.getTitle(),
                 task.getDescription(),
                 task.getDueDate(),
                 task.getStatus(),
                 task.getPriority(),
-                parent
+                parentId,
+                subtasks
         );
     }
 }

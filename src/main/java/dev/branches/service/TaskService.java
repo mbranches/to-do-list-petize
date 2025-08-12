@@ -4,8 +4,11 @@ import dev.branches.entity.Priority;
 import dev.branches.entity.Task;
 import dev.branches.entity.TaskStatus;
 import dev.branches.entity.User;
+import dev.branches.exception.BadRequestException;
+import dev.branches.exception.NotFoundException;
 import dev.branches.repository.TaskRepository;
 import dev.branches.repository.specification.TaskSpecification;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -49,5 +52,29 @@ public class TaskService {
         );
 
         return repository.findAll(filter, safePageable);
+    }
+
+    @Transactional
+    public Task addSubtask(User requestingUser, String parentTaskId, Task subtaskToCreate, Optional<TaskStatus> statusOptional) {
+        Task parentTask = findByIdAndUserOrThrowsNotFoundException(parentTaskId, requestingUser);
+
+        TaskStatus subtaskStatus = statusOptional.orElse(TaskStatus.EM_ANDAMENTO);
+
+        boolean parentTaskHasConcluidaStatus = parentTask.getStatus().equals(TaskStatus.CONCLUIDA);
+        if(parentTaskHasConcluidaStatus && !subtaskStatus.equals(TaskStatus.CONCLUIDA)) {
+            throw new BadRequestException("Não é possível adicionar uma task que não foi concluída a uma task concluída");
+        }
+
+        subtaskToCreate.setStatus(subtaskStatus);
+        subtaskToCreate.setParent(parentTask);
+
+        repository.save(subtaskToCreate);
+
+        return parentTask;
+    }
+
+    public Task findByIdAndUserOrThrowsNotFoundException(String id, User user) {
+        return repository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new NotFoundException("Task com id '%s' não encontrada".formatted(id)));
     }
 }

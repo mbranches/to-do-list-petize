@@ -40,8 +40,13 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }  catch (JWTVerificationException exception) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Token JWT inválido ou expirado.");
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.setHeader("content-type", "application/json");
+                response.getWriter().write("""
+                        {
+                          "status": 403,
+                          "message": "Token JWT inválido ou expirado"
+                        }""");
 
                 return;
             }

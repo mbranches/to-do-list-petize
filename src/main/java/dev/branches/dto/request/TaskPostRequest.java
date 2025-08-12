@@ -19,7 +19,7 @@ public record TaskPostRequest(
         @Schema(example = "2025-08-15", description = "data de vencimento")
         @NotNull(message = "O campo 'dueDate' é obrigatório")
         LocalDate dueDate,
-        @Schema(example = "PENDENTE", description = "status da tarefa")
+        @Schema(example = "PENDENTE", description = "status da tarefa, caso não seja enviado, o status PENDENTE será definido por padrão")
         Optional<TaskStatus> status,
         @NotNull(message = "O campo 'priority' é obrigatório")
         @Schema(example = "ALTA", description = "prioridade da tarefa")

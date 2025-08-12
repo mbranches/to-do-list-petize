@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDate;
 
-public record SubtaskGetResponse(
+public record TaskSummaryResponse(
         @Schema(example = "uuid.task-2", description = "id da task")
         String id,
         @Schema(example = "Documentar teste técnico PETIZE", description = "título da tarefa")
@@ -21,8 +21,8 @@ public record SubtaskGetResponse(
         @Schema(example = "ALTA", description = "prioridade da tarefa")
         Priority priority
 ) {
-    public static SubtaskGetResponse by(Task task) {
-        return new SubtaskGetResponse(
+    public static TaskSummaryResponse by(Task task) {
+        return new TaskSummaryResponse(
                 task.getId(),
                 task.getTitle(),
                 task.getDescription(),

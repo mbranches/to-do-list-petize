@@ -24,11 +24,11 @@ public record TaskGetResponse(
         @Schema(example = "uuid.task-pai-exemplo", description = "ID da tarefa pai. Será nulo se for uma tarefa principal.", nullable = true)
         String parentId,
         @Schema(description = "Lista de subtarefas associadas a esta tarefa.", nullable = true)
-        List<SubtaskGetResponse> subtasks
+        List<TaskSummaryResponse> subtasks
 ) {
         public static TaskGetResponse by(Task task) {
                 String parentId = task.getParent() != null ? task.getParent().getId() : null;
-                List<SubtaskGetResponse> subtasks = task.getSubtasks().stream().map(SubtaskGetResponse::by).toList();
+                List<TaskSummaryResponse> subtasks = task.getSubtasks().stream().map(TaskSummaryResponse::by).toList();
 
                 return new TaskGetResponse(
                         task.getId(),

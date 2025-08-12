@@ -25,6 +25,7 @@ public class TaskUtils {
                 .dueDate(dueDate1)
                 .status(TaskStatus.EM_ANDAMENTO)
                 .priority(Priority.ALTA)
+                .subtasks(new ArrayList<>())
                 .createdAt(createdAt1)
                 .updatedAt(createdAt1)
                 .build();
@@ -40,6 +41,7 @@ public class TaskUtils {
                 .dueDate(dueDate2)
                 .status(TaskStatus.CONCLUIDA)
                 .priority(Priority.ALTA)
+                .subtasks(new ArrayList<>())
                 .parent(task1)
                 .createdAt(createdAt2)
                 .updatedAt(createdAt2)
@@ -57,6 +59,7 @@ public class TaskUtils {
                 .dueDate(dueDate3)
                 .status(TaskStatus.PENDENTE)
                 .priority(Priority.ALTA)
+                .subtasks(new ArrayList<>())
                 .createdAt(createdAt3)
                 .updatedAt(createdAt3)
                 .build();

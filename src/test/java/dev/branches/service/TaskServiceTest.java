@@ -3,6 +3,8 @@ package dev.branches.service;
 import dev.branches.entity.Task;
 import dev.branches.entity.TaskStatus;
 import dev.branches.entity.User;
+import dev.branches.exception.BadRequestException;
+import dev.branches.exception.NotFoundException;
 import dev.branches.repository.TaskRepository;
 import dev.branches.utils.TaskUtils;
 import dev.branches.utils.UserUtils;
@@ -23,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -129,5 +132,70 @@ class TaskServiceTest {
         assertThat(response.getContent())
                 .isNotNull()
                 .isEmpty();
+    }
+
+    @Test
+    @DisplayName("addSubtask add subtask to task when successful")
+    @Order(5)
+    void addSubtask_AddSubtaskToTask_WhenSuccessful() {
+        Task parentTask = taskList.getFirst().withStatus(TaskStatus.PENDENTE);
+        String parentTaskId = parentTask.getId();
+
+        User requestingUser = parentTask.getUser();
+
+        Task subtaskToCreate = TaskUtils.newTaskToCreate();
+        Task createdSubtask = TaskUtils.newTaskCreated().withParent(parentTask);
+
+        when(repository.findByIdAndUser(parentTaskId, requestingUser))
+                .thenReturn(Optional.of(parentTask));
+        when(repository.save(subtaskToCreate.withParent(parentTask)))
+                .thenReturn(createdSubtask);
+
+        Task response = service.addSubtask(requestingUser, parentTaskId, subtaskToCreate, Optional.of(TaskStatus.PENDENTE));
+
+        parentTask.getSubtasks().add(createdSubtask);
+
+        assertThat(response)
+                .isNotNull()
+                .isEqualTo(parentTask);
+        assertThat(response.getSubtasks())
+                .containsExactlyElementsOf(parentTask.getSubtasks());
+    }
+
+    @Test
+    @DisplayName("addSubtask throws NotFoundException when the given task parent id is not found")
+    @Order(6)
+    void addSubtask_ThrowsNotFoundException_WhenTheGivenTaskParentIdIsNotFound() {
+        String randomId = "random-id";
+
+        User requestingUser = UserUtils.newUserList().getFirst();
+
+        Task subtaskToCreate = TaskUtils.newTaskToCreate();
+
+        when(repository.findByIdAndUser(randomId, requestingUser))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.addSubtask(requestingUser, randomId, subtaskToCreate, Optional.of(TaskStatus.PENDENTE)))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("Tarefa com id '%s' não encontrada".formatted(randomId));
+    }
+
+    @Test
+    @DisplayName("addSubtask throws BadRequestException when the parent task has concluida status and the subtask does not")
+    @Order(7)
+    void addSubtask_ThrowsBadRequestException_WhenTheParentTaskHasConcluidaStatusAndTheSubtaskDoesNot() {
+        Task parentTask = taskList.getFirst().withStatus(TaskStatus.CONCLUIDA);
+        String parentTaskId = parentTask.getId();
+
+        User requestingUser = parentTask.getUser();
+
+        Task subtaskToCreate = TaskUtils.newTaskToCreate();
+
+        when(repository.findByIdAndUser(parentTaskId, requestingUser))
+                .thenReturn(Optional.of(parentTask));
+
+        assertThatThrownBy(() -> service.addSubtask(requestingUser, parentTaskId, subtaskToCreate, Optional.of(TaskStatus.PENDENTE)))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessageContaining("Não é possível adicionar uma task que não foi concluída a uma task concluída");
     }
 }

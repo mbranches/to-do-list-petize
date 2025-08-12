@@ -41,6 +41,7 @@ public class TaskController {
 
     @Operation(
             summary = "Criar tarefa",
+            description = "Cria uma tarefa e vincula ao usuário solicitante, caso o status não seja passado o status predefinido é 'PENDENTE'",
             responses = {
                     @ApiResponse(
                             responseCode = "201",
@@ -135,7 +136,7 @@ public class TaskController {
 
     @Operation(
             summary = "Adicionar subtarefa",
-            description = "Adiciona uma subtarefa a outra já criada e retorna a tarefa pai com suas subtarefas",
+            description = "Adiciona uma subtarefa a outra já criada e retorna a tarefa pai com suas subtarefas, caso status não seja passado, o status predefinido é 'PENDENTE'",
             responses = {
                     @ApiResponse(
                             responseCode = "201",
@@ -177,7 +178,7 @@ public class TaskController {
 
     @Operation(
             summary = "Atualiza uma tarefa",
-            description = "Atualiza uma tarefa do usuário solicitante",
+            description = "Atualiza uma tarefa do usuário solicitante, caso status não seja passado, o status predefinido é 'PENDENTE'",
             responses = {
                     @ApiResponse(
                             responseCode = "204",

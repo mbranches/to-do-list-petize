@@ -2,6 +2,7 @@ package dev.branches.controller;
 
 import dev.branches.dto.ParentTaskByAddSubtask;
 import dev.branches.dto.request.TaskPostRequest;
+import dev.branches.dto.request.TaskPutRequest;
 import dev.branches.dto.response.PageResponse;
 import dev.branches.dto.response.TaskGetResponse;
 import dev.branches.dto.response.TaskPostResponse;
@@ -158,7 +159,7 @@ public class TaskController {
             }
     )
     @PostMapping("/{parentTaskId}/subtasks")
-    public ResponseEntity<ParentTaskByAddSubtask> addSubtask(@AuthenticationPrincipal User requestingUser, @PathVariable String parentTaskId, @RequestBody TaskPostRequest request) {
+    public ResponseEntity<ParentTaskByAddSubtask> addSubtask(@AuthenticationPrincipal User requestingUser, @PathVariable String parentTaskId, @RequestBody @Valid TaskPostRequest request) {
         Task subtaskToCreate = Task.builder()
                 .user(requestingUser)
                 .title(request.title())
@@ -173,4 +174,49 @@ public class TaskController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+    @Operation(
+            summary = "Atualiza uma tarefa",
+            description = "Atualiza uma tarefa do usuário solicitante",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Tarefa atualizada com sucesso",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "campo obrigatório não enviado no corpo da requisição, o id da url é diferente do id passado no corpo da requisição ou o status passado é CONCLUIDA, porém a tarefa possui subtasks PENDENTE ou EM_ANDAMENTO",
+                            content = @Content(schema = @Schema(implementation = DefaultErrorMessage.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "usuário solicitante não autenticado",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "id da tarefa não encontrado",
+                            content = @Content(schema = @Schema(implementation = DefaultErrorMessage.class))
+                    )
+            }
+    )
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> update(@AuthenticationPrincipal User requestingUser,
+                                       @PathVariable String id,
+                                       @Valid @RequestBody TaskPutRequest request) {
+        Task taskToUpdate = Task.builder()
+                .id(request.id())
+                .user(requestingUser)
+                .title(request.title())
+                .description(request.description())
+                .dueDate(request.dueDate())
+                .priority(request.priority())
+                .build();
+
+        service.update(requestingUser, id, taskToUpdate, request.status());
+
+        return ResponseEntity.noContent().build();
+    }
 }
+

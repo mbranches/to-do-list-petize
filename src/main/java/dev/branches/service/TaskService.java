@@ -8,7 +8,6 @@ import dev.branches.exception.BadRequestException;
 import dev.branches.exception.NotFoundException;
 import dev.branches.repository.TaskRepository;
 import dev.branches.repository.specification.TaskSpecification;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -77,5 +76,37 @@ public class TaskService {
     public Task findByIdAndUserOrThrowsNotFoundException(String id, User user) {
         return repository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new NotFoundException("Tarefa com id '%s' não encontrada".formatted(id)));
+    }
+
+    public void update(User requestingUser, String id, Task taskWithNewDatas, Optional<TaskStatus> statusOptional) {
+        if (!id.equals(taskWithNewDatas.getId())) throw new BadRequestException("O id da url (%s) é diferente do id do corpo da requisição (%s)".formatted(id, taskWithNewDatas.getId()));
+
+        Task taskToUpdate = findByIdAndUserOrThrowsNotFoundException(id, requestingUser);
+
+        TaskStatus taskStatus = statusOptional.orElse(TaskStatus.PENDENTE);
+
+        assertThatTheTaskDoesHasNoSubtasksWithStatusDifferentOfConcluida(taskToUpdate);
+
+        taskToUpdate.setTitle(taskWithNewDatas.getTitle());
+        taskToUpdate.setDescription(taskWithNewDatas.getDescription());
+        taskToUpdate.setStatus(taskStatus);
+        taskToUpdate.setDueDate(taskWithNewDatas.getDueDate());
+        taskToUpdate.setPriority(taskToUpdate.getPriority());
+
+        repository.save(taskToUpdate);
+    }
+
+    private void assertThatTheTaskDoesHasNoSubtasksWithStatusDifferentOfConcluida(Task taskToVerify) {
+        taskToVerify.getSubtasks()
+                .forEach(task -> {
+                    assertThatTheTaskDoesHasNoSubtasksWithStatusDifferentOfConcluida(task);
+
+                    boolean taskHaveNonConcluidaStatus = !task.getStatus().equals(TaskStatus.CONCLUIDA);
+
+                    if (taskHaveNonConcluidaStatus) {
+                        throw new BadRequestException("Não é possível setar o status 'CONCLUIDA' à task, a subtask '%s' possui o status '%s'".formatted(task.getTitle(), task.getStatus()));
+                    }
+                });
+
     }
 }

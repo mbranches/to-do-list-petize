@@ -134,7 +134,7 @@ public class TaskController {
 
     @Operation(
             summary = "Adicionar subtarefa",
-            description = "Adiciona uma subtarefa a outra já criada",
+            description = "Adiciona uma subtarefa a outra já criada e retorna a tarefa pai com suas subtarefas",
             responses = {
                     @ApiResponse(
                             responseCode = "201",

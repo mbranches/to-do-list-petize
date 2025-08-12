@@ -11,10 +11,10 @@ import java.util.Optional;
 
 public record TaskPostRequest(
         @NotBlank(message = "O campo 'title' é obrigatório")
-        @Schema(example = "Limpar a casa", description = "título da tarefa")
+        @Schema(example = "Realizar teste técnico", description = "título da tarefa")
         String title,
         @NotBlank(message = "O campo 'description' é obrigatório")
-        @Schema(example = "Varrer sala e cozinha", description = "descrição da tarefa")
+        @Schema(example = "Realizar teste técnico para vaga de estágio em backend da Petize", description = "descrição da tarefa")
         String description,
         @Schema(example = "2025-08-15", description = "data de vencimento")
         @NotNull(message = "O campo 'dueDate' é obrigatório")

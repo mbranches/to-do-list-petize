@@ -54,7 +54,6 @@ public class TaskService {
         return repository.findAll(filter, safePageable);
     }
 
-    @Transactional
     public Task addSubtask(User requestingUser, String parentTaskId, Task subtaskToCreate, Optional<TaskStatus> statusOptional) {
         Task parentTask = findByIdAndUserOrThrowsNotFoundException(parentTaskId, requestingUser);
 
@@ -68,7 +67,9 @@ public class TaskService {
         subtaskToCreate.setStatus(subtaskStatus);
         subtaskToCreate.setParent(parentTask);
 
-        repository.save(subtaskToCreate);
+        Task createdSubtask = repository.save(subtaskToCreate);
+
+        parentTask.getSubtasks().add(createdSubtask);
 
         return parentTask;
     }

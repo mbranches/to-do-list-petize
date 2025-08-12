@@ -88,4 +88,26 @@ public class TaskUtils {
                 .withCreatedAt(createdAt)
                 .withUpdatedAt(createdAt);
     }
+
+    public static Task newTaskWithNewDataForUpdate() {
+        Task taskToUpdate = newTaskList().getFirst();
+
+        return Task.builder()
+                .id(taskToUpdate.getId())
+                .user(taskToUpdate.getUser())
+                .title("New title")
+                .description("New description")
+                .dueDate(taskToUpdate.getDueDate())
+                .build();
+    }
+
+    public static Task newTaskUpdated() {
+        Task taskToUpdate = newTaskList().getFirst();
+
+        return taskToUpdate
+                .withTitle(newTaskWithNewDataForUpdate().getTitle())
+                .withDescription(newTaskWithNewDataForUpdate().getDescription())
+                .withDueDate(newTaskWithNewDataForUpdate().getDueDate())
+                .withStatus(TaskStatus.EM_ANDAMENTO);
+    }
 }

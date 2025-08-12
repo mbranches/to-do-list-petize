@@ -20,12 +20,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -197,5 +197,100 @@ class TaskServiceTest {
         assertThatThrownBy(() -> service.addSubtask(requestingUser, parentTaskId, subtaskToCreate, Optional.of(TaskStatus.PENDENTE)))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessageContaining("Não é possível adicionar uma task que não foi concluída a uma task concluída");
+    }
+
+    @Test
+    @DisplayName("update updates task when successful")
+    @Order(8)
+    void update_UpdatesTask_WhenSuccessful() {
+        Task taskToUpdate = taskList.getFirst();
+
+        Task taskWithNewData = TaskUtils.newTaskWithNewDataForUpdate();
+        Task updatedTask = TaskUtils.newTaskUpdated();
+        String taskToUpdateId = taskWithNewData.getId();
+
+        User requestingUser = taskWithNewData.getUser();
+
+        when(repository.findByIdAndUser(taskToUpdateId, requestingUser))
+                .thenReturn(Optional.of(taskToUpdate));
+        when(repository.save(updatedTask))
+                .thenReturn(updatedTask);
+
+        assertThatNoException()
+                .isThrownBy(() -> service.update(requestingUser, taskToUpdateId, taskWithNewData, Optional.of(updatedTask.getStatus())));
+    }
+
+    @Test
+    @DisplayName("update updates task with status pendente when status is not given")
+    @Order(9)
+    void update_UpdatesTaskWithStatusPendente_WhenStatusIsNotGiven() {
+        Task taskToUpdate = taskList.getFirst();
+
+        Task taskWithNewData = TaskUtils.newTaskWithNewDataForUpdate();
+        Task updatedTask = TaskUtils.newTaskUpdated().withStatus(TaskStatus.PENDENTE);
+        String taskToUpdateId = taskWithNewData.getId();
+
+        User requestingUser = taskWithNewData.getUser();
+
+        when(repository.findByIdAndUser(taskToUpdateId, requestingUser))
+                .thenReturn(Optional.of(taskToUpdate));
+        when(repository.save(updatedTask))
+                .thenReturn(updatedTask);
+
+        assertThatNoException()
+                .isThrownBy(() -> service.update(requestingUser, taskToUpdateId, taskWithNewData, Optional.empty()));
+    }
+
+    @Test
+    @DisplayName("update throws BadRequestException when the url id is different of the request body id")
+    @Order(10)
+    void update_ThrowsBadRequestException_WhenTheUrlIdIsDifferentOfTheRequestBodyId() {
+        Task taskWithNewData = TaskUtils.newTaskWithNewDataForUpdate();
+        String randomId = "random-id";
+
+        User requestingUser = taskWithNewData.getUser();
+
+        assertThatThrownBy(() -> service.update(requestingUser, randomId, taskWithNewData, Optional.empty()))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessageContaining("O id da url (%s) é diferente do id do corpo da requisição (%s)".formatted(randomId, taskWithNewData.getId()));
+    }
+
+    @Test
+    @DisplayName("update throws NotFoundException when the task id is not found")
+    @Order(11)
+    void update_ThrowsNotFoundException_WhenTheTaskIdIsNotFound() {
+        String randomId = "random-id";
+        Task taskWithNewData = TaskUtils.newTaskWithNewDataForUpdate().withId(randomId);
+
+        User requestingUser = taskWithNewData.getUser();
+
+        when(repository.findByIdAndUser(randomId, requestingUser))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.update(requestingUser, randomId, taskWithNewData, Optional.empty()))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("Tarefa com id '%s' não encontrada".formatted(randomId));
+
+    }
+
+    @Test
+    @DisplayName("update throws BadRequestException when the status to update is concluida and some subtask does not have concluida status")
+    @Order(12)
+    void update_ThrowsBadRequestException_WhenTheStatusToUpdateIsConcluidaAndSomeSubtaskDoesNotHaveConcluidaStatus() {
+        Task subtask = taskList.get(1).withStatus(TaskStatus.PENDENTE);
+        List<Task> subtaskList = new ArrayList<>(List.of(subtask));
+        Task taskToUpdate = taskList.getFirst().withSubtasks(subtaskList);
+
+        Task taskWithNewData = TaskUtils.newTaskWithNewDataForUpdate();
+        String taskToUpdateId = taskWithNewData.getId();
+
+        User requestingUser = taskWithNewData.getUser();
+
+        when(repository.findByIdAndUser(taskToUpdateId, requestingUser))
+                .thenReturn(Optional.of(taskToUpdate));
+
+        assertThatThrownBy(() -> service.update(requestingUser, taskToUpdateId, taskWithNewData, Optional.of(TaskStatus.CONCLUIDA)))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessageContaining("Não é possível setar o status 'CONCLUIDA' à task, a subtask '%s' possui o status '%s'".formatted(subtask.getTitle(), subtask.getStatus()));
     }
 }

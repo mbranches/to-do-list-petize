@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -351,5 +352,38 @@ class TaskServiceTest {
         assertThatThrownBy(() -> service.updateStatus(requestingUser, taskToUpdateStatusId, newStatus))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessageContaining("Não é possível setar o status 'CONCLUIDA' à task, a subtask '%s' possui o status '%s'".formatted(subtask.getTitle(), subtask.getStatus()));
+    }
+
+    @Test
+    @DisplayName("deleteById removes task when successful")
+    @Order(16)
+    void deleteById_RemovesTask_WhenSuccessful() {
+        Task taskToDelete = taskList.getFirst();
+        String idToDelete = taskToDelete.getId();
+
+        User requestingUser = taskToDelete.getUser();
+
+        when(repository.findByIdAndUser(idToDelete, requestingUser))
+                .thenReturn(Optional.of(taskToDelete));
+        doNothing().when(repository).delete(taskToDelete);
+
+        assertThatNoException()
+                .isThrownBy(() -> service.deleteById(requestingUser, idToDelete));
+    }
+
+    @Test
+    @DisplayName("deleteById throws NotFoundException when the task id is not found\n")
+    @Order(17)
+    void deleteById_ThrowsNotFoundException_WhenTheTaskIdIsNotFound() {
+        String randomId = "random-id";
+
+        User requestingUser = UserUtils.newUserList().getFirst();
+
+        when(repository.findByIdAndUser(randomId, requestingUser))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.deleteById(requestingUser, randomId))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("Tarefa com id '%s' não encontrada".formatted(randomId));
     }
 }

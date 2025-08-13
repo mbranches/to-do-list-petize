@@ -86,7 +86,8 @@ public class TaskService {
 
         TaskStatus taskStatus = statusOptional.orElse(TaskStatus.PENDENTE);
 
-        assertThatTheTaskDoesHasNoSubtasksWithStatusDifferentOfConcluida(taskToUpdate);
+        if(taskStatus.equals(TaskStatus.CONCLUIDA))
+            assertThatTheTaskDoesHasNoSubtasksWithStatusDifferentOfConcluida(taskToUpdate);
 
         taskToUpdate.setTitle(taskWithNewDatas.getTitle());
         taskToUpdate.setDescription(taskWithNewDatas.getDescription());

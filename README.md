@@ -78,15 +78,24 @@ A aplicação possui total cobertura com testes unitários da camada de serviço
       git clone https://github.com/mbranches/to-do-list-petize.git
       cd to-do-list-petize
     ```
-2.  Inicie o banco de dados com Docker Compose:
+2. Popular as variáveis de ambiente:
+  - Variável Docker:
+    - Renomeie o arquivo `.envTemplate` para `.env`, presente na raíz do projeto, e preencha a variável com o valor desejado para o seu ambiente de desenvolvimento.
+  - Variáveis Spring Boot:
+    - Navegue até o diretório `src/main/resources`.
+    - Renomeie o arquivo `.envTemplate` para `.env` e preencha com os valores desejados.
+    - Obs: `ENV_MYSQL_PASSWORD` deve ser igual ao definido no `.env` na raíz do projeto.
+
+
+3. Inicie o banco de dados com Docker Compose:
     ```bash
       docker-compose up -d
     ```
-3.  Execute a aplicação Spring Boot via Maven:
+4. Execute a aplicação Spring Boot via Maven:
     ```bash
       .\mvnw spring-boot:run
     ```
-4.  A API estará disponível em `http://localhost:8080`.
+5. A API estará disponível em `http://localhost:8080`.
 
 ## 🛠️ Tecnologias utilizadas
 

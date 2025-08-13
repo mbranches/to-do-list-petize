@@ -293,4 +293,63 @@ class TaskServiceTest {
                 .isInstanceOf(BadRequestException.class)
                 .hasMessageContaining("Não é possível setar o status 'CONCLUIDA' à task, a subtask '%s' possui o status '%s'".formatted(subtask.getTitle(), subtask.getStatus()));
     }
+
+    @Test
+    @DisplayName("updateStatus updates task status when successful")
+    @Order(13)
+    void updateStatus_UpdatesTaskStatus_WhenSuccessful() {
+        Task taskToUpdateStatus = taskList.getFirst();
+        String taskToUpdateStatusId = taskToUpdateStatus.getId();
+        User requestingUser = taskToUpdateStatus.getUser();
+
+        TaskStatus newStatus = TaskStatus.CONCLUIDA;
+
+        Task updatedTask = taskToUpdateStatus.withStatus(newStatus);
+
+        when(repository.findByIdAndUser(taskToUpdateStatusId, requestingUser))
+                .thenReturn(Optional.of(taskToUpdateStatus));
+        when(repository.save(updatedTask))
+                .thenReturn(updatedTask);
+
+        assertThatNoException()
+                .isThrownBy(() -> service.updateStatus(requestingUser, taskToUpdateStatusId, newStatus));
+    }
+
+    @Test
+    @DisplayName("updateStatus throws NotFoundException when the task id is not found")
+    @Order(14)
+    void updateStatus_ThrowsNotFoundException_WhenTheTaskIdIsNotFound() {
+        String randomId = "random-id";
+        User requestingUser = UserUtils.newUserList().getFirst();
+
+        TaskStatus newStatus = TaskStatus.CONCLUIDA;
+
+        when(repository.findByIdAndUser(randomId, requestingUser))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.updateStatus(requestingUser, randomId, newStatus))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("Tarefa com id '%s' não encontrada".formatted(randomId));
+    }
+
+    @Test
+    @DisplayName("updateStatus throws BadRequestException when the status to update is concluida and some subtask does not have concluida status")
+    @Order(15)
+    void updateStatus_ThrowsBadRequestException_WhenTheStatusToUpdateIsConcluidaAndSomeSubtaskDoesNotHaveConcluidaStatus() {
+        Task subtask = taskList.get(1).withStatus(TaskStatus.PENDENTE);
+        List<Task> subtaskList = new ArrayList<>(List.of(subtask));
+
+        Task taskToUpdateStatus = taskList.getFirst().withSubtasks(subtaskList);
+        String taskToUpdateStatusId = taskToUpdateStatus.getId();
+        User requestingUser = taskToUpdateStatus.getUser();
+
+        TaskStatus newStatus = TaskStatus.CONCLUIDA;
+
+        when(repository.findByIdAndUser(taskToUpdateStatusId, requestingUser))
+                .thenReturn(Optional.of(taskToUpdateStatus));
+
+        assertThatThrownBy(() -> service.updateStatus(requestingUser, taskToUpdateStatusId, newStatus))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessageContaining("Não é possível setar o status 'CONCLUIDA' à task, a subtask '%s' possui o status '%s'".formatted(subtask.getTitle(), subtask.getStatus()));
+    }
 }

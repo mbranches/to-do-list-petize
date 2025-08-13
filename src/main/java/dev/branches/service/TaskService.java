@@ -120,4 +120,10 @@ public class TaskService {
 
         repository.save(task);
     }
+
+    public void deleteById(User requestingUser, String id) {
+        Task taskToDelete = findByIdAndUserOrThrowsNotFoundException(id, requestingUser);
+
+        repository.delete(taskToDelete);
+    }
 }

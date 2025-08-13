@@ -271,5 +271,22 @@ public class TaskController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(
+            summary = "Deletar tarefa",
+            description = "Deleta tarefa do usuário da requisição. Caso a tarefa possua subtarefas, essas também serão deletadas",
+            parameters = {
+                    @Parameter(
+                            name = "id",
+                            description = "id da tarefa a ser deletada"
+                    )
+            }
+    )
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@AuthenticationPrincipal User requestingUser, @PathVariable String id) {
+        service.deleteById(requestingUser, id);
+
+        return ResponseEntity.noContent().build();
+    }
 }
 

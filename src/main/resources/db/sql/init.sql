@@ -25,6 +25,11 @@ CREATE TABLE IF NOT EXISTS tb_task(
         ON DELETE CASCADE,
     CONSTRAINT fk_task_parent FOREIGN KEY(parent_id)
         REFERENCES tb_task(id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+    INDEX idx_task_user_id (user_id),
+    INDEX idx_task_user_id_parent_id (user_id, parent_id),
+    INDEX idx_task_user_id_status (user_id, status),
+    INDEX idx_task_user_id_priority (user_id, priority),
+    INDEX idx_task_user_id_due_date (user_id, due_date)
 );
 

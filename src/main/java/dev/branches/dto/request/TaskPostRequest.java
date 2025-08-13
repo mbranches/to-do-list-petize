@@ -1,16 +1,9 @@
 package dev.branches.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import dev.branches.entity.Priority;
-import dev.branches.entity.TaskStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalDate;
-import java.util.Optional;
 
 public record TaskPostRequest(
         @NotBlank(message = "O campo 'title' é obrigatório")

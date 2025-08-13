@@ -50,7 +50,7 @@
 - **Estrutura em Camadas:** O projeto segue uma arquitetura em camadas bem definida (Controller, Service, Repository) para garantir a separação de responsabilidades.
 - **Banco de Dados:**
   - O script de inicialização (`/src/main/resources/db/sql/init.sql`) é executado automaticamente pela aplicação.
-  - **Estratégia de Indexação:** Para otimizar a performance, foram criados **índices compostos** nas colunas mais utilizadas em filtros (ex: `(user_id, status)`, `(user_id, due_date)` e `(user_id, priority_id)`)). Essa abordagem é altamente eficiente, pois o banco de dados pode usar um único índice para filtrar por usuário e por outro critério simultaneamente.
+  - **Estratégia de Indexação:** Para otimizar a performance, foram criados **índices compostos** nas colunas mais utilizadas em filtros (ex: `(user_id, status)`, `(user_id, due_date)` e `(user_id, priority_id)`). Essa abordagem é altamente eficiente, pois o banco de dados pode usar um único índice para filtrar por usuário e por outro critério simultaneamente.
 
 ## 🧪 Testes
 A aplicação possui total cobertura com testes unitários da camada de serviço (a responsável pela lógica de negócio da aplicação), garantindo o correto funcionamento dos componentes isoladamente.

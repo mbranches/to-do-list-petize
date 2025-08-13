@@ -235,7 +235,7 @@ public class TaskController {
     }
 
     @Operation(
-            summary = "Atualiza uma tarefa",
+            summary = "Atualizar uma tarefa",
             description = "Atualiza uma tarefa do usuário solicitante, caso status não seja passado, o status predefinido é 'PENDENTE'",
             parameters = {
                     @Parameter(

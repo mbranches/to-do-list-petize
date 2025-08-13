@@ -145,6 +145,41 @@ public class TaskController {
     }
 
     @Operation(
+            summary = "Detalhar tarefa por id",
+            description = "Retorna a tarefa encontrada via id",
+            parameters = {
+                    @Parameter(
+                            name = "id",
+                            description = "id da tarefa para detalhar"
+                    )
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Tarefa retornada com sucesso"
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "O usuário da requisição não está autenticado",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "id da tarefa não encontrado",
+                            content = @Content(schema = @Schema(implementation = DefaultErrorMessage.class))
+                    ),
+            }
+    )
+    @GetMapping("/{id}")
+    public ResponseEntity<TaskGetResponse> findById(@AuthenticationPrincipal User requestingUser, @PathVariable String id) {
+        Task task = service.findByIdAndUserOrThrowsNotFoundException(id, requestingUser);
+
+        TaskGetResponse response = TaskGetResponse.by(task);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
             summary = "Adicionar subtarefa",
             description = "Adiciona uma subtarefa a outra já criada e retorna a tarefa pai com suas subtarefas, caso status não seja passado, o status predefinido é 'PENDENTE'",
             parameters = {

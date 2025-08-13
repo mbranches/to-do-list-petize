@@ -5,8 +5,8 @@ import dev.branches.entity.TaskStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 public record TaskPutRequest(
@@ -20,8 +20,9 @@ public record TaskPutRequest(
         @Schema(example = "Nova descrição", description = "descrição da tarefa")
         String description,
         @NotNull(message = "O campo 'dueDate' é obrigatório")
+        @Pattern(regexp = "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$", message = "O formato de 'dueDate' deve ser yyyy-MM-dd")
         @Schema(example = "2025-08-10", description = "data de vencimento")
-        LocalDate dueDate,
+        String dueDate,
         @Schema(example = "PENDENTE", description = "status da tarefa, caso não enviada o status definido será PENDENTE")
         Optional<TaskStatus> status,
         @NotNull(message = "O campo 'priority' é obrigatório")

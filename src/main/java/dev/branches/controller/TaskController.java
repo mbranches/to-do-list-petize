@@ -178,7 +178,7 @@ public class TaskController {
                 .user(requestingUser)
                 .title(request.title())
                 .description(request.description())
-                .dueDate(request.dueDate())
+                .dueDate(LocalDate.parse(request.dueDate()))
                 .priority(request.priority())
                 .build();
 
@@ -230,7 +230,7 @@ public class TaskController {
                 .user(requestingUser)
                 .title(request.title())
                 .description(request.description())
-                .dueDate(request.dueDate())
+                .dueDate(LocalDate.parse(request.dueDate()))
                 .priority(request.priority())
                 .build();
 

@@ -32,6 +32,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Tag(name = "Tarefas", description = "Operações com tarefas")
 @SecurityRequirement(name = "Bearer Authentication")
@@ -69,10 +70,12 @@ public class TaskController {
                 .title(request.title())
                 .description(request.description())
                 .dueDate(LocalDate.parse(request.dueDate()))
-                .priority(request.priority())
+                .priority(Priority.valueOf(request.priority()))
                 .build();
 
-        Task savedTask = service.create(taskToCreate, request.status());
+        Optional<TaskStatus> status = request.status().isBlank() ? Optional.empty() : Optional.of(TaskStatus.valueOf(request.status()));
+
+        Task savedTask = service.create(taskToCreate, status);
 
         TaskPostResponse response = TaskPostResponse.by(savedTask);
 
@@ -179,10 +182,17 @@ public class TaskController {
                 .title(request.title())
                 .description(request.description())
                 .dueDate(LocalDate.parse(request.dueDate()))
-                .priority(request.priority())
+                .priority(Priority.valueOf(request.priority()))
                 .build();
 
-        Task createdTask = service.addSubtask(requestingUser, parentTaskId, subtaskToCreate, request.status());
+        Optional<TaskStatus> status = request.status().isBlank() ? Optional.empty() : Optional.of(TaskStatus.valueOf(request.status()));
+
+        Task createdTask = service.addSubtask(
+                requestingUser,
+                parentTaskId,
+                subtaskToCreate,
+                status
+        );
 
         ParentTaskByAddSubtask response = ParentTaskByAddSubtask.by(createdTask);
 
@@ -231,10 +241,17 @@ public class TaskController {
                 .title(request.title())
                 .description(request.description())
                 .dueDate(LocalDate.parse(request.dueDate()))
-                .priority(request.priority())
+                .priority(Priority.valueOf(request.priority()))
                 .build();
 
-        service.update(requestingUser, id, taskToUpdate, request.status());
+        Optional<TaskStatus> status = request.status().isBlank() ? Optional.empty() : Optional.of(TaskStatus.valueOf(request.status()));
+
+        service.update(
+                requestingUser,
+                id,
+                taskToUpdate,
+                status
+        );
 
         return ResponseEntity.noContent().build();
     }

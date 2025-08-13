@@ -23,9 +23,11 @@ public record TaskPostRequest(
         @Pattern(regexp = "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$", message = "O formato de 'dueDate' deve ser yyyy-MM-dd")
         @NotNull(message = "O campo 'dueDate' é obrigatório")
         String dueDate,
+        @Pattern(regexp = "^(?i)(PENDENTE|EM_ANDAMENTO|CONCLUIDA)$", message = "Status inválido. Valores aceitos: PENDENTE, EM_ANDAMENTO, CONCLUIDA.")
         @Schema(example = "PENDENTE", description = "status da tarefa, caso não seja enviado, o status PENDENTE será definido por padrão")
-        Optional<TaskStatus> status,
+        String status,
+        @Pattern(regexp = "^(?i)(ALTA|REGULAR|BAIXA)$", message = "Prioridade inválida. Valores aceitos: ALTA, REGULAR, BAIXA.")
         @NotNull(message = "O campo 'priority' é obrigatório")
         @Schema(example = "ALTA", description = "prioridade da tarefa")
-        Priority priority
+        String priority
 ) {}

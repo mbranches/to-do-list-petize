@@ -338,6 +338,17 @@ public class TaskController {
                             name = "id",
                             description = "id da tarefa a ser deletada"
                     )
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Tarefa removida com sucesso"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Id da tarefa não encontrada",
+                            content = @Content(schema = @Schema(implementation = DefaultErrorMessage.class))
+                    )
             }
     )
     @DeleteMapping("/{id}")

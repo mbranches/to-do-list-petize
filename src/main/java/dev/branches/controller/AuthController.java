@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Autenticação")
+@Tag(name = "Autenticação", description = "Rotas de autenticação")
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
 @RestController
@@ -29,6 +29,7 @@ public class AuthController {
 
     @Operation(
         summary = "Cadastro",
+        description = "Cadastra usuário",
         responses = {
                 @ApiResponse(
                         responseCode = "201",
@@ -57,6 +58,7 @@ public class AuthController {
 
     @Operation(
             summary = "Login",
+            description = "Autentica usuário no sistema através do email e senha",
             responses = {
                     @ApiResponse(
                             responseCode = "200",

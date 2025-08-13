@@ -65,13 +65,7 @@ public class TaskController {
     )
     @PostMapping
     public ResponseEntity<TaskPostResponse> create(@AuthenticationPrincipal User requestingUser, @RequestBody @Valid TaskPostRequest request) {
-        Task taskToCreate = Task.builder()
-                .user(requestingUser)
-                .title(request.title())
-                .description(request.description())
-                .dueDate(LocalDate.parse(request.dueDate()))
-                .priority(Priority.valueOf(request.priority()))
-                .build();
+        Task taskToCreate = Task.by(requestingUser, request);
 
         Optional<TaskStatus> status = request.status() == null ? Optional.empty() : Optional.of(TaskStatus.valueOf(request.status()));
 
@@ -212,13 +206,7 @@ public class TaskController {
     )
     @PostMapping("/{parentTaskId}/subtasks")
     public ResponseEntity<ParentTaskByAddSubtask> addSubtask(@AuthenticationPrincipal User requestingUser, @PathVariable String parentTaskId, @RequestBody @Valid TaskPostRequest request) {
-        Task subtaskToCreate = Task.builder()
-                .user(requestingUser)
-                .title(request.title())
-                .description(request.description())
-                .dueDate(LocalDate.parse(request.dueDate()))
-                .priority(Priority.valueOf(request.priority()))
-                .build();
+        Task subtaskToCreate = Task.by(requestingUser, request);
 
         Optional<TaskStatus> status = request.status() == null ? Optional.empty() : Optional.of(TaskStatus.valueOf(request.status()));
 
@@ -270,14 +258,7 @@ public class TaskController {
     public ResponseEntity<Void> update(@AuthenticationPrincipal User requestingUser,
                                        @PathVariable String id,
                                        @Valid @RequestBody TaskPutRequest request) {
-        Task taskToUpdate = Task.builder()
-                .id(request.id())
-                .user(requestingUser)
-                .title(request.title())
-                .description(request.description())
-                .dueDate(LocalDate.parse(request.dueDate()))
-                .priority(Priority.valueOf(request.priority()))
-                .build();
+        Task taskToUpdate = Task.by(requestingUser, request);
 
         Optional<TaskStatus> status = request.status() == null ? Optional.empty() : Optional.of(TaskStatus.valueOf(request.status()));
 

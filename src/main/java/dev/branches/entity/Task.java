@@ -1,5 +1,7 @@
 package dev.branches.entity;
 
+import dev.branches.dto.request.TaskPostRequest;
+import dev.branches.dto.request.TaskPutRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -50,4 +52,25 @@ public class Task {
     private Task parent;
     @OneToMany(mappedBy = "parent")
     private List<Task> subtasks;
+
+    public static Task by(User user, TaskPostRequest postRequest) {
+        return Task.builder()
+                .user(user)
+                .title(postRequest.title())
+                .description(postRequest.description())
+                .dueDate(LocalDate.parse(postRequest.dueDate()))
+                .priority(Priority.valueOf(postRequest.priority()))
+                .build();
+    }
+
+    public static Task by(User user, TaskPutRequest putRequest) {
+        return Task.builder()
+                .id(putRequest.id())
+                .user(user)
+                .title(putRequest.title())
+                .description(putRequest.description())
+                .dueDate(LocalDate.parse(putRequest.dueDate()))
+                .priority(Priority.valueOf(putRequest.priority()))
+                .build();
+    }
 }

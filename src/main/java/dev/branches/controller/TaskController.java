@@ -138,6 +138,12 @@ public class TaskController {
     @Operation(
             summary = "Adicionar subtarefa",
             description = "Adiciona uma subtarefa a outra já criada e retorna a tarefa pai com suas subtarefas, caso status não seja passado, o status predefinido é 'PENDENTE'",
+            parameters = {
+                    @Parameter(
+                            name = "parentTaskId",
+                            description = "id da tarefa pai para adicionar subtarefa"
+                    )
+            },
             responses = {
                     @ApiResponse(
                             responseCode = "201",
@@ -180,6 +186,12 @@ public class TaskController {
     @Operation(
             summary = "Atualiza uma tarefa",
             description = "Atualiza uma tarefa do usuário solicitante, caso status não seja passado, o status predefinido é 'PENDENTE'",
+            parameters = {
+                    @Parameter(
+                            name = "id",
+                            description = "id da tarefa a ser atualizada"
+                    )
+            },
             responses = {
                     @ApiResponse(
                             responseCode = "204",

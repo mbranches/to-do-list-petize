@@ -24,7 +24,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-    import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -67,7 +68,7 @@ public class TaskController {
                 .user(requestingUser)
                 .title(request.title())
                 .description(request.description())
-                .dueDate(request.dueDate())
+                .dueDate(LocalDate.parse(request.dueDate()))
                 .priority(request.priority())
                 .build();
 
@@ -88,7 +89,12 @@ public class TaskController {
                     ),
                     @Parameter(
                             name = "size",
-                            description = "Número de elementos a listar por página (tem o valor padrão de 10)"
+                            description = "Número de elementos a listar por página (tem o valor padrão de 15)"
+                    ),
+                    @Parameter(
+                            name = "sort",
+                            description = "Critério de ordenação: 'campo,direção'. Ex: 'dueDate,desc'. Nesse caso irá ordenar pelo campo 'dueDate' em ordem decrescente",
+                            example = "dueDate,desc"
                     ),
                     @Parameter(
                             name = "status",
@@ -119,7 +125,7 @@ public class TaskController {
             }
     )
     @GetMapping
-    public ResponseEntity<PageResponse<TaskGetResponse>> listAll(@Parameter(hidden = true) Pageable pageable,
+    public ResponseEntity<PageResponse<TaskGetResponse>> listAll(@Parameter(hidden = true) @PageableDefault(size = 15) Pageable pageable,
                                                                  @AuthenticationPrincipal User requestingUser,
                                                                  @RequestParam(required = false) TaskStatus status,
                                                                  @RequestParam(required = false) Priority priority,

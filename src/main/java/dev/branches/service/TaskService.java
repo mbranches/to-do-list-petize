@@ -47,7 +47,8 @@ public class TaskService {
 
         Pageable safePageable = PageRequest.of(
                 pageable.getPageNumber(),
-                pageable.getPageSize()
+                pageable.getPageSize(),
+                pageable.getSort()
         );
 
         return repository.findAll(filter, safePageable);

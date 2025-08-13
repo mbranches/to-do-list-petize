@@ -73,7 +73,7 @@ public class TaskController {
                 .priority(Priority.valueOf(request.priority()))
                 .build();
 
-        Optional<TaskStatus> status = request.status().isBlank() ? Optional.empty() : Optional.of(TaskStatus.valueOf(request.status()));
+        Optional<TaskStatus> status = request.status() == null ? Optional.empty() : Optional.of(TaskStatus.valueOf(request.status()));
 
         Task savedTask = service.create(taskToCreate, status);
 
@@ -220,7 +220,7 @@ public class TaskController {
                 .priority(Priority.valueOf(request.priority()))
                 .build();
 
-        Optional<TaskStatus> status = request.status().isBlank() ? Optional.empty() : Optional.of(TaskStatus.valueOf(request.status()));
+        Optional<TaskStatus> status = request.status() == null ? Optional.empty() : Optional.of(TaskStatus.valueOf(request.status()));
 
         Task createdTask = service.addSubtask(
                 requestingUser,
@@ -279,7 +279,7 @@ public class TaskController {
                 .priority(Priority.valueOf(request.priority()))
                 .build();
 
-        Optional<TaskStatus> status = request.status().isBlank() ? Optional.empty() : Optional.of(TaskStatus.valueOf(request.status()));
+        Optional<TaskStatus> status = request.status() == null ? Optional.empty() : Optional.of(TaskStatus.valueOf(request.status()));
 
         service.update(
                 requestingUser,

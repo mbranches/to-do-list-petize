@@ -4,7 +4,7 @@
 
 - **Candidato:** Marcus Vinicius Lima Branches - Estudante de Engenharia de Software na Universidade do Estado do Pará (UEPA)
 - **Vídeo de Demonstração:** [Explicação das Funcionalidades](https://youtu.be/5moKPlWwqvs)
-- 
+
 ## 📜 Índice
 
 - [Funcionalidades Implementadas](#-funcionalidades-implementadas)

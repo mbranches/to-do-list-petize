@@ -41,7 +41,7 @@
 - ✅ **Containerização do Banco:** Uso de `Docker Compose` para inicializar o banco de dados MySQL, facilitando a configuração do ambiente de desenvolvimento.
 
 ## 📖 Documentação da API
-> A API está completamente documentada com Swagger, para visitar a documentação basta acessar a url http://localhost:8080/swagger-ui.html
+> A API está completamente documentada com Swagger, para visitar a documentação, com a API rodando, basta acessar a url http://localhost:8080/swagger-ui.html
 
 ![Demonstração swagger-ui](assets/swagger-ui.png)
 

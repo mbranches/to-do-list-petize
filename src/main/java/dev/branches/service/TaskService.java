@@ -93,7 +93,7 @@ public class TaskService {
         taskToUpdate.setDescription(taskWithNewDatas.getDescription());
         taskToUpdate.setStatus(taskStatus);
         taskToUpdate.setDueDate(taskWithNewDatas.getDueDate());
-        taskToUpdate.setPriority(taskToUpdate.getPriority());
+        taskToUpdate.setPriority(taskWithNewDatas.getPriority());
 
         repository.save(taskToUpdate);
     }

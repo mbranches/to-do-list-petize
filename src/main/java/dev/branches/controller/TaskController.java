@@ -1,6 +1,7 @@
 package dev.branches.controller;
 
 import dev.branches.dto.ParentTaskByAddSubtask;
+import dev.branches.dto.StatusPatchRequest;
 import dev.branches.dto.request.TaskPostRequest;
 import dev.branches.dto.request.TaskPutRequest;
 import dev.branches.dto.response.PageResponse;
@@ -216,6 +217,45 @@ public class TaskController {
                 .build();
 
         service.update(requestingUser, id, taskToUpdate, request.status());
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(
+            summary = "Atualizar status",
+            description = "Atualiza status de tarefa",
+            parameters = {
+                    @Parameter(
+                            name = "id",
+                            description = "id da tarefa para atualizar status"
+                    )
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Status da tarefa atualizada com sucesso",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "campo 'status' não enviado no corpo da requisição ou o status passado é 'CONCLUIDA', porém a tarefa possui subtasks com status 'PENDENTE' ou 'EM_ANDAMENTO'",
+                            content = @Content(schema = @Schema(implementation = DefaultErrorMessage.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "usuário solicitante não autenticado",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "id da tarefa não encontrado",
+                            content = @Content(schema = @Schema(implementation = DefaultErrorMessage.class))
+                    )
+            }
+    )
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<Void> updateTaskStatus(@AuthenticationPrincipal User requestingUser, @PathVariable String id, @RequestBody @Valid StatusPatchRequest request) {
+        service.updateStatus(requestingUser, id, request.status());
 
         return ResponseEntity.noContent().build();
     }

@@ -109,4 +109,15 @@ public class TaskService {
                 });
 
     }
+
+    public void updateStatus(User requestingUser, String id, TaskStatus status) {
+        Task task = findByIdAndUserOrThrowsNotFoundException(id, requestingUser);
+
+        if (status.equals(TaskStatus.CONCLUIDA))
+            assertThatTheTaskDoesHasNoSubtasksWithStatusDifferentOfConcluida(task);
+
+        task.setStatus(status);
+
+        repository.save(task);
+    }
 }

@@ -386,4 +386,39 @@ class TaskServiceTest {
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Tarefa com id '%s' não encontrada".formatted(randomId));
     }
+
+    @Test
+    @DisplayName("findByIdAndUserOrThrowsNotFoundException return found task when successful")
+    @Order(18)
+    void findByIdAndUserOrThrowsNotFoundException_ReturnFoundTask_WhenSuccessful() {
+        Task taskToBeFound = taskList.getFirst();
+        String idToSearch = taskToBeFound.getId();
+
+        User requestingUser = taskToBeFound.getUser();
+
+        when(repository.findByIdAndUser(idToSearch, requestingUser))
+                .thenReturn(Optional.of(taskToBeFound));
+
+        Task response = service.findByIdAndUserOrThrowsNotFoundException(idToSearch, requestingUser);
+
+        assertThat(response)
+                .isNotNull()
+                .isEqualTo(taskToBeFound);
+    }
+
+    @Test
+    @DisplayName("findByIdAndUserOrThrowsNotFoundException throws NotFoundException when the task id is not found")
+    @Order(18)
+    void findByIdAndUserOrThrowsNotFoundException_ThrowsNotFoundException_WhenTheTaskIdIsNotFound() {
+        String randomId = "random-id";
+
+        User requestingUser = UserUtils.newUserList().getFirst();
+
+        when(repository.findByIdAndUser(randomId, requestingUser))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.findByIdAndUserOrThrowsNotFoundException(randomId, requestingUser))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("Tarefa com id '%s' não encontrada".formatted(randomId));
+    }
 }

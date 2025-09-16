@@ -3,7 +3,6 @@
 > Resolução do Desafio Técnico para a vaga de Estágio Backend, focada em demonstrar conhecimentos em Java, Spring Boot, MySQL e boas práticas de desenvolvimento.
 
 - **Candidato:** Marcus Vinicius Lima Branches - Estudante de Engenharia de Software na Universidade do Estado do Pará (UEPA)
-- **Vídeo de Demonstração:** [Explicação das Funcionalidades](https://youtu.be/ZZFpCiOfyBY)
 
 ## 📜 Índice
 
